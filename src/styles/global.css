@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0b0d10;
+  --color-surface: #14171c;
+  --color-line: #262b33;
+  --color-text: #e6e8eb;
+  --color-muted: #9aa3ad;
+  --color-accent: #f59e0b;
+
+  --font-sans: "Inter Variable", system-ui, sans-serif;
+  --font-mono:
+    ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+}
+
+:root {
+  color-scheme: dark;
+  --card: color-mix(in srgb, white 2%, transparent);
+  --card-top: color-mix(in srgb, white 5%, transparent);
+  --card-hover: color-mix(in srgb, white 5%, transparent);
+  --card-border: color-mix(in srgb, white 13%, transparent);
+  --card-inset: color-mix(in srgb, white 14%, transparent);
+  --card-shadow: 0 4px 24px rgb(0 0 0 / 0.35);
+  --card-blur: blur(2px) saturate(1.3) brightness(2);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #faf9f7;
+  --color-surface: #f5f4f2;
+  --color-line: #e7e5e2;
+  --color-text: #1c1917;
+  --color-muted: #57534e;
+  --color-accent: #b45309;
+
+  --card: color-mix(in srgb, white 25%, transparent);
+  --card-top: color-mix(in srgb, white 45%, transparent);
+  --card-hover: color-mix(in srgb, white 38%, transparent);
+  --card-border: color-mix(in srgb, black 10%, transparent);
+  --card-inset: color-mix(in srgb, white 75%, transparent);
+  --card-shadow: 0 6px 20px rgb(0 0 0 / 0.1);
+  --card-blur: blur(2px) saturate(1.2);
+}
+
+[data-theme="light"] .icon-sun {
+  display: none;
+}
+html:not([data-theme="light"]) .icon-moon {
+  display: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+}
+
+@layer components {
+  .card {
+    background: linear-gradient(150deg, var(--card-top), var(--card));
+    border: 1px solid var(--card-border);
+    -webkit-backdrop-filter: var(--card-blur);
+    backdrop-filter: var(--card-blur);
+    box-shadow:
+      inset 0 1px 0 var(--card-inset),
+      var(--card-shadow);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .card:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+
+  .nav-items {
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+  [data-header][data-hidden] .nav-items {
+    opacity: 0;
+    transform: translateY(-140%);
+    pointer-events: none;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition:
+      opacity 0.9s ease 0.15s,
+      transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+  }
+
+  .reveal.in-view {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  .prose {
+    color: var(--color-muted);
+    line-height: 1.75;
+  }
+  .prose > * + * {
+    margin-top: 1.1rem;
+  }
+  .prose h2 {
+    color: var(--color-text);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2.25rem;
+  }
+  .prose h3 {
+    color: var(--color-text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 1.75rem;
+  }
+  .prose a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose strong {
+    color: var(--color-text);
+  }
+  .prose ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+  }
+  .prose ol {
+    list-style: decimal;
+    padding-left: 1.5rem;
+  }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: color-mix(in srgb, var(--color-text) 10%, transparent);
+    padding: 0.1em 0.35em;
+    border-radius: 0.3em;
+    color: var(--color-text);
+  }
+  .prose pre {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 0.6rem;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  .prose pre code {
+    background: none;
+    padding: 0;
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+}

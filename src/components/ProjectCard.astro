@@ -1,0 +1,67 @@
+---
+import { Icon } from "astro-icon/components";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { title, description, tags, url, repo, caseStudy } = project.data;
+---
+
+<article class="card flex flex-col gap-2 rounded-xl p-4">
+  <h3 class="font-medium tracking-tight">{title}</h3>
+  <p class="line-clamp-1 text-sm leading-relaxed text-muted">{description}</p>
+  {
+    tags.length > 0 && (
+      <ul class="flex flex-wrap gap-1.5" aria-label="Technologies">
+        {tags.slice(0, 3).map((tag) => (
+          <li class="rounded-full border border-line px-2 py-0.5 font-mono text-xs text-muted">
+            {tag}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  {
+    caseStudy && (
+      <a
+        href={`/journal/${caseStudy}`}
+        class="text-sm text-accent underline-offset-4 hover:underline"
+      >
+        Read the case study →
+      </a>
+    )
+  }
+  <div class="mt-auto flex gap-4 pt-0.5">
+    {
+      repo && (
+        <a
+          href={repo}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${title} on GitHub`}
+          title="GitHub"
+          class="text-muted hover:text-accent"
+        >
+          <Icon name="simple-icons:github" class="h-5 w-5" />
+        </a>
+      )
+    }
+    {
+      url && (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${title} live demo`}
+          title="Live demo"
+          class="text-muted hover:text-accent"
+        >
+          <Icon name="lucide:external-link" class="h-5 w-5" />
+        </a>
+      )
+    }
+  </div>
+</article>

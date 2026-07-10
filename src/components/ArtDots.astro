@@ -1,0 +1,219 @@
+<canvas data-art-dots></canvas>
+
+<style>
+  canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+  }
+</style>
+
+<script>
+  import * as THREE from "three";
+
+  const SCALE = 200;
+  const LENGTH = 10;
+  const SPACING = 15;
+
+  // Ashima 3D simplex noise (https://github.com/ashima/webgl-noise), MIT.
+  const NOISE_GLSL = /* glsl */ `
+    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 permute(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
+    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+    float snoise(vec3 v) {
+      const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
+      const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+
+      vec3 i = floor(v + dot(v, C.yyy));
+      vec3 x0 = v - i + dot(i, C.xxx);
+
+      vec3 g = step(x0.yzx, x0.xyz);
+      vec3 l = 1.0 - g;
+      vec3 i1 = min(g.xyz, l.zxy);
+      vec3 i2 = max(g.xyz, l.zxy);
+
+      vec3 x1 = x0 - i1 + C.xxx;
+      vec3 x2 = x0 - i2 + C.yyy;
+      vec3 x3 = x0 - D.yyy;
+
+      i = mod289(i);
+      vec4 p = permute(permute(permute(
+          i.z + vec4(0.0, i1.z, i2.z, 1.0))
+        + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+        + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+
+      float n_ = 0.142857142857;
+      vec3 ns = n_ * D.wyz - D.xzx;
+
+      vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+
+      vec4 x_ = floor(j * ns.z);
+      vec4 y_ = floor(j - 7.0 * x_);
+
+      vec4 x = x_ * ns.x + ns.yyyy;
+      vec4 y = y_ * ns.x + ns.yyyy;
+      vec4 h = 1.0 - abs(x) - abs(y);
+
+      vec4 b0 = vec4(x.xy, y.xy);
+      vec4 b1 = vec4(x.zw, y.zw);
+
+      vec4 s0 = floor(b0) * 2.0 + 1.0;
+      vec4 s1 = floor(b1) * 2.0 + 1.0;
+      vec4 sh = -step(h, vec4(0.0));
+
+      vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
+      vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
+
+      vec3 p0 = vec3(a0.xy, h.x);
+      vec3 p1 = vec3(a0.zw, h.y);
+      vec3 p2 = vec3(a1.xy, h.z);
+      vec3 p3 = vec3(a1.zw, h.w);
+
+      vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
+      p0 *= norm.x;
+      p1 *= norm.y;
+      p2 *= norm.z;
+      p3 *= norm.w;
+
+      vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
+      m = m * m;
+      return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+    }
+  `;
+
+  const vertexShader = /* glsl */ `
+    ${NOISE_GLSL}
+
+    attribute float aOpacity;
+    uniform float uTime;
+    uniform float uPixelRatio;
+    varying float vAlpha;
+
+    void main() {
+      vec2 field = position.xy / ${SCALE.toFixed(1)};
+      float rad = snoise(vec3(field, uTime)) * 6.28318530718;
+      float len = (snoise(vec3(field, uTime * 2.0)) * 0.5 + 1.0) * ${LENGTH.toFixed(1)};
+      vec3 p = position + vec3(cos(rad) * len, sin(rad) * len, 0.0);
+
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+      gl_PointSize = 3.4 * uPixelRatio;
+      vAlpha = (abs(cos(rad)) * 0.8 + 0.2) * aOpacity;
+    }
+  `;
+
+  const fragmentShader = /* glsl */ `
+    uniform vec3 uColor;
+    uniform float uOpacity;
+    varying float vAlpha;
+
+    void main() {
+      vec2 c = gl_PointCoord - 0.5;
+      if (dot(c, c) > 0.25) discard;
+      gl_FragColor = vec4(uColor, vAlpha * uOpacity);
+    }
+  `;
+
+  const canvas = document.querySelector<HTMLCanvasElement>("[data-art-dots]");
+
+  if (canvas) {
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+    });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(w, h);
+    renderer.setClearColor(0x000000, 0);
+
+    const camera = new THREE.OrthographicCamera(0, w, 0, h, -1, 1);
+    const scene = new THREE.Scene();
+
+    const material = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        uTime: { value: 0 },
+        uPixelRatio: { value: window.devicePixelRatio },
+        uColor: { value: new THREE.Color(0.5, 0.5, 0.5) },
+        uOpacity: { value: 0.4 },
+      },
+      transparent: true,
+      depthWrite: false,
+    });
+
+    let points: THREE.Points | null = null;
+
+    const buildGrid = () => {
+      if (points) {
+        points.geometry.dispose();
+        scene.remove(points);
+      }
+      const positions: number[] = [];
+      const opacities: number[] = [];
+      for (let x = -SPACING; x < w + SPACING; x += SPACING) {
+        for (let y = -SPACING; y < h + SPACING; y += SPACING) {
+          positions.push(x, y, 0);
+          opacities.push(Math.random() * 0.5 + 0.5);
+        }
+      }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(positions, 3),
+      );
+      geometry.setAttribute(
+        "aOpacity",
+        new THREE.Float32BufferAttribute(opacities, 1),
+      );
+      points = new THREE.Points(geometry, material);
+      scene.add(points);
+    };
+
+    buildGrid();
+
+    const renderFrame = () => {
+      material.uniforms.uTime.value = performance.now() / 10000;
+      renderer.render(scene, camera);
+    };
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const applyTheme = () => {
+      const isLight = document.documentElement.dataset.theme === "light";
+      if (isLight) {
+        material.uniforms.uColor.value.setRGB(0.11, 0.098, 0.09);
+        material.uniforms.uOpacity.value = 0.45;
+      } else {
+        material.uniforms.uColor.value.setRGB(0.6, 0.6, 0.6);
+        material.uniforms.uOpacity.value = 0.42;
+      }
+      if (prefersReducedMotion) renderFrame();
+    };
+    applyTheme();
+    window.addEventListener("themechange", applyTheme);
+
+    if (prefersReducedMotion) {
+      renderFrame();
+    } else {
+      renderer.setAnimationLoop(renderFrame);
+    }
+
+    window.addEventListener("resize", () => {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      renderer.setSize(w, h);
+      camera.right = w;
+      camera.bottom = h;
+      camera.updateProjectionMatrix();
+      buildGrid();
+      if (prefersReducedMotion) renderFrame();
+    });
+  }
+</script>

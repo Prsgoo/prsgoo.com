@@ -1,0 +1,227 @@
+---
+import "@fontsource-variable/inter/index.css";
+
+import "~/styles/global.css";
+
+import { Icon } from "astro-icon/components";
+
+import ArtDots from "~/components/ArtDots.astro";
+import site from "~/data/site.yaml";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = `${site.name} — ${site.role}. Projects and work.`,
+} = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL("/og.png", Astro.site);
+
+const path = Astro.url.pathname;
+const navItems = [
+  { href: "/experience", label: "Experience", icon: "lucide:briefcase" },
+  { href: "/projects", label: "Projects", icon: "lucide:folder" },
+  { href: "/journal", label: "Journal", icon: "lucide:book-open" },
+];
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <script is:inline>
+      const theme = localStorage.getItem("theme") || "dark";
+      document.documentElement.dataset.theme = theme;
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+  </head>
+  <body class="flex min-h-screen flex-col antialiased">
+    <ArtDots />
+    <header data-header class="sticky top-0 z-50">
+      <div class="flex items-center justify-between px-6 py-4 sm:px-8">
+        <a
+          href="/"
+          class="text-text hover:text-accent"
+          aria-label="Prsgoo — home"
+        >
+          <svg
+            viewBox="0 0 128 128"
+            class="h-7 w-7"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M44 98 L44 32 L65 32 A19 19 0 0 1 65 70 L44 70"
+              stroke="currentColor"
+              stroke-width="15"
+              stroke-linejoin="round"
+              stroke-linecap="round"></path>
+          </svg>
+        </a>
+        <nav
+          aria-label="Main"
+          class="nav-items flex items-center gap-4 text-muted sm:gap-5"
+        >
+          {
+            navItems.map((item) => (
+              <a
+                href={item.href}
+                aria-label={item.label}
+                title={item.label}
+                aria-current={isActive(item.href) ? "page" : undefined}
+                class:list={[
+                  "hover:text-text",
+                  { "text-text": isActive(item.href) },
+                ]}
+              >
+                <Icon name={item.icon} class="h-5 w-5" />
+              </a>
+            ))
+          }
+          <span
+            class="hidden h-4 w-px bg-line sm:block"
+            aria-hidden="true"
+          ></span>
+          <a
+            href={site.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="GitHub"
+            class="hidden hover:text-text sm:block"
+          >
+            <Icon name="simple-icons:github" class="h-5 w-5" />
+          </a>
+          <a
+            href={site.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            title="LinkedIn"
+            class="hidden hover:text-text sm:block"
+          >
+            <Icon name="simple-icons:linkedin" class="h-5 w-5" />
+          </a>
+          <button
+            type="button"
+            data-theme-toggle
+            aria-label="Toggle theme"
+            class="hover:text-text"
+          >
+            <Icon name="lucide:sun" class="icon-sun h-5 w-5" />
+            <Icon name="lucide:moon" class="icon-moon h-5 w-5" />
+          </button>
+        </nav>
+      </div>
+    </header>
+    <main class="flex-1">
+      <slot />
+    </main>
+    <footer
+      class="mx-auto flex w-full max-w-5xl items-center justify-between border-t border-line px-6 py-8 text-sm text-muted"
+    >
+      <p>
+        © {new Date().getFullYear()} · Built by Prsgoo with{" "}
+        <span class="text-accent" role="img" aria-label="love">♥</span>
+      </p>
+      <div class="flex gap-5">
+        <a
+          href={site.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+          title="GitHub"
+          class="hover:text-text"
+        >
+          <Icon name="simple-icons:github" class="h-5 w-5" />
+        </a>
+        <a
+          href={site.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+          title="LinkedIn"
+          class="hover:text-text"
+        >
+          <Icon name="simple-icons:linkedin" class="h-5 w-5" />
+        </a>
+      </div>
+    </footer>
+    <script>
+      const elements = document.querySelectorAll(".reveal");
+      const prefersReducedMotion = matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (prefersReducedMotion) {
+        elements.forEach((el) => el.classList.add("in-view"));
+      } else {
+        // Reset only when it exits through the bottom, so scrolling down replays the reveal.
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("in-view");
+              } else if (entry.boundingClientRect.top > 0) {
+                entry.target.classList.remove("in-view");
+              }
+            }
+          },
+          { rootMargin: "0px" },
+        );
+        elements.forEach((el) => observer.observe(el));
+      }
+
+      const header = document.querySelector("[data-header]");
+      if (header) {
+        let lastY = window.scrollY;
+        const onScroll = () => {
+          const y = window.scrollY;
+          if (y > lastY && y > 120) header.setAttribute("data-hidden", "");
+          else header.removeAttribute("data-hidden");
+          lastY = y;
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+      }
+
+      const setTheme = (next: string) => {
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem("theme", next);
+        window.dispatchEvent(new CustomEvent("themechange"));
+      };
+      const themeToggle = document.querySelector("[data-theme-toggle]");
+      themeToggle?.addEventListener("click", () => {
+        const next =
+          document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        const startViewTransition = (
+          document as any
+        ).startViewTransition?.bind(document);
+        if (startViewTransition && !prefersReducedMotion) {
+          startViewTransition(() => setTheme(next));
+        } else {
+          setTheme(next);
+        }
+      });
+    </script>
+  </body>
+</html>

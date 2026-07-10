@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+
+import ProjectCard from "~/components/ProjectCard.astro";
+import site from "~/data/site.yaml";
+import Layout from "~/layouts/Layout.astro";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Layout
+  title={`Projects — ${site.name}`}
+  description={`Public projects by ${site.name}.`}
+>
+  <div class="mx-auto max-w-5xl px-6 py-16">
+    <h1 class="text-3xl font-semibold tracking-tight">Projects</h1>
+    <p class="mt-3 max-w-xl leading-relaxed text-muted">
+      Public work — each links to its source, a live demo when there is one, and
+      a deeper case study when I've written one.
+    </p>
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </div>
+</Layout>

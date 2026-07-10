@@ -1,0 +1,13 @@
+role: Software Engineer
+company: NTT DATA Europe & Latam
+location: Seville, Spain (Remote)
+start: 2021-07-01
+end: 2022-09-01
+tags:
+  - .NET Core
+  - Angular
+  - Entity Framework
+  - Azure DevOps
+highlights:
+  - Built production features and REST APIs with C#/.NET and Angular, backed by SQL Server and Entity Framework.
+  - Set up automated testing and CI/CD pipelines (Azure DevOps) to keep releases predictable.
