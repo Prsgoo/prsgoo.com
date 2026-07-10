@@ -4,6 +4,8 @@ import "@fontsource-variable/inter/index.css";
 import "~/styles/global.css";
 
 import { Icon } from "astro-icon/components";
+import Analytics from "@vercel/analytics/astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 
 import ArtDots from "~/components/ArtDots.astro";
 import site from "~/data/site.yaml";
@@ -223,5 +225,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
         }
       });
     </script>
+    <Analytics />
+    <SpeedInsights />
   </body>
 </html>
