@@ -8,6 +8,11 @@ import icon from 'astro-icon';
 
 export default defineConfig({
   site: 'https://prsgoo.com',
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'es'],
+    routing: { prefixDefaultLocale: false },
+  },
   integrations: [icon(), sitemap()],
   vite: {
     plugins: [tailwindcss(), yaml()],

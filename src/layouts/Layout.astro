@@ -9,30 +9,34 @@ import SpeedInsights from "@vercel/speed-insights/astro";
 
 import ArtDots from "~/components/ArtDots.astro";
 import site from "~/data/site.yaml";
+import { toLocale, useTranslations } from "~/i18n/ui";
 
 interface Props {
   title: string;
   description?: string;
 }
 
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+
 const {
   title,
-  description = `${site.name} — ${site.role}. Projects and work.`,
+  description = `${site.name} — ${site.role[locale]}. ${t("meta.description")}`,
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL("/og.png", Astro.site);
 
 const path = Astro.url.pathname;
 const navItems = [
-  { href: "/experience", label: "Experience", icon: "lucide:briefcase" },
-  { href: "/projects", label: "Projects", icon: "lucide:folder" },
-  { href: "/journal", label: "Journal", icon: "lucide:book-open" },
+  { href: "/experience", label: t("nav.experience"), icon: "lucide:briefcase" },
+  { href: "/projects", label: t("nav.projects"), icon: "lucide:folder" },
+  { href: "/journal", label: t("nav.journal"), icon: "lucide:book-open" },
 ];
 const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -127,7 +131,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
           <button
             type="button"
             data-theme-toggle
-            aria-label="Toggle theme"
+            aria-label={t("nav.toggleTheme")}
             class="hover:text-text"
           >
             <Icon name="lucide:sun" class="icon-sun h-5 w-5" />
@@ -143,7 +147,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
       class="mx-auto flex w-full max-w-5xl items-center justify-between border-t border-line px-6 py-8 text-sm text-muted"
     >
       <p>
-        © {new Date().getFullYear()} · Built by Prsgoo with{" "}
+        © {new Date().getFullYear()} · {t("footer.builtBy")}{" "}
         <span class="text-accent" role="img" aria-label="love">♥</span>
       </p>
       <div class="flex gap-5">
