@@ -8,7 +8,20 @@ import icon from 'astro-icon';
 
 export default defineConfig({
   site: 'https://prsgoo.com',
-  integrations: [icon(), sitemap()],
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'es'],
+    routing: { prefixDefaultLocale: false },
+  },
+  integrations: [
+    icon(),
+    sitemap({
+      i18n: {
+        defaultLocale: 'en',
+        locales: { en: 'en-US', es: 'es-ES' },
+      },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss(), yaml()],
   },

@@ -1,9 +1,18 @@
 name: Jorge Rojas Escobar
-role: Senior Backend Engineer (.NET)
-tagline: >-
-  Quality and stability above all — I build backends that are boring in the
-  best way: rock-solid, low-maintenance, and easy to extend without breaking
-  what already works.
-location: Sevilla, Andalusia, Spain · open to remote
 github: https://github.com/Prsgoo
 linkedin: https://www.linkedin.com/in/jrojas-escobar
+role:
+  en: Senior Backend Engineer (.NET)
+  es: Ingeniero backend senior (.NET)
+tagline:
+  en: >-
+    Quality and stability above all — I build backends that are boring in the
+    best way: rock-solid, low-maintenance, and easy to extend without breaking
+    what already works.
+  es: >-
+    Calidad y estabilidad ante todo — construyo backends aburridos en el buen
+    sentido: sólidos como una roca, de bajo mantenimiento y fáciles de ampliar
+    sin romper lo que ya funciona.
+location:
+  en: Seville, Andalusia, Spain · open to remote
+  es: Sevilla, Andalucía, España · abierto a remoto

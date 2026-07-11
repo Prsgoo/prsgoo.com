@@ -1,0 +1,143 @@
+---
+import { getCollection } from "astro:content";
+
+import { Icon } from "astro-icon/components";
+
+import ProjectCard from "~/components/ProjectCard.astro";
+import site from "~/data/site.yaml";
+import {
+  byLocale,
+  entrySlug,
+  formatMonthYear,
+  localizedPath,
+  toLocale,
+  useTranslations,
+} from "~/i18n/ui";
+import Layout from "~/layouts/Layout.astro";
+
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const inLocale = byLocale(locale);
+
+const featured = (
+  await getCollection("projects", (e) => e.data.featured && inLocale(e))
+)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const journal = (
+  await getCollection(
+    "journal",
+    (e) => inLocale(e) && (import.meta.env.DEV || !e.data.draft),
+  )
+)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+---
+
+<Layout title={site.name}>
+  <section
+    class="mx-auto flex min-h-full max-w-5xl flex-col justify-center gap-8 px-6 py-8"
+  >
+    <div>
+      <p class="font-mono text-sm tracking-widest text-accent uppercase">
+        {site.location[locale]}
+      </p>
+      <h1 class="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+        {site.name}
+      </h1>
+      <p class="mt-2 text-xl text-muted sm:text-2xl">{site.role[locale]}</p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
+        {site.tagline[locale]}
+      </p>
+      <div class="mt-6 flex gap-6">
+        <a
+          href={site.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+          title="GitHub"
+          class="text-muted hover:text-accent"
+        >
+          <Icon name="simple-icons:github" class="h-6 w-6" />
+        </a>
+        <a
+          href={site.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+          title="LinkedIn"
+          class="text-muted hover:text-accent"
+        >
+          <Icon name="simple-icons:linkedin" class="h-6 w-6" />
+        </a>
+      </div>
+    </div>
+
+    {
+      featured.length > 0 && (
+        <section aria-labelledby="featured-heading">
+          <div class="flex items-baseline justify-between">
+            <h2
+              id="featured-heading"
+              class="font-mono text-sm tracking-widest text-accent uppercase"
+            >
+              {t("home.featured")}
+            </h2>
+            <a
+              href={localizedPath(locale, "/projects")}
+              class="text-sm text-muted underline-offset-4 hover:text-accent hover:underline"
+            >
+              {t("home.allProjects")} →
+            </a>
+          </div>
+          <div class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      journal.length > 0 && (
+        <section aria-labelledby="journal-heading">
+          <div class="flex items-baseline justify-between">
+            <h2
+              id="journal-heading"
+              class="font-mono text-sm tracking-widest text-accent uppercase"
+            >
+              {t("home.latestJournal")}
+            </h2>
+            <a
+              href={localizedPath(locale, "/journal")}
+              class="text-sm text-muted underline-offset-4 hover:text-accent hover:underline"
+            >
+              {t("home.allPosts")} →
+            </a>
+          </div>
+          <ul class="mt-3 divide-y divide-line/60">
+            {journal.map((entry) => (
+              <li>
+                <a
+                  href={localizedPath(locale, `/journal/${entrySlug(entry.id)}`)}
+                  class="group flex items-center gap-4 py-2.5 text-muted transition-colors hover:text-text"
+                >
+                  <span class="w-20 shrink-0 font-mono text-xs">
+                    {formatMonthYear(locale, entry.data.date)}
+                  </span>
+                  <span class="flex-1 text-text">{entry.data.title}</span>
+                  <Icon
+                    name="lucide:arrow-right"
+                    class="h-4 w-4 text-accent transition-transform group-hover:translate-x-1"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </section>
+</Layout>

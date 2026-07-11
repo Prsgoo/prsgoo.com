@@ -2,12 +2,16 @@
 import { Icon } from "astro-icon/components";
 import type { CollectionEntry } from "astro:content";
 
+import { localizedPath, toLocale, useTranslations } from "~/i18n/ui";
+
 interface Props {
   project: CollectionEntry<"projects">;
 }
 
 const { project } = Astro.props;
 const { title, description, tags, url, repo, caseStudy } = project.data;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
 ---
 
 <article class="card flex flex-col gap-2 rounded-xl p-4">
@@ -27,10 +31,10 @@ const { title, description, tags, url, repo, caseStudy } = project.data;
   {
     caseStudy && (
       <a
-        href={`/journal/${caseStudy}`}
+        href={localizedPath(locale, `/journal/${caseStudy}`)}
         class="text-sm text-accent underline-offset-4 hover:underline"
       >
-        Read the case study →
+        {t("projects.readCaseStudy")} →
       </a>
     )
   }

@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+
+import site from "~/data/site.yaml";
+import {
+  formatFullDate,
+  localizedPath,
+  toLocale,
+  useTranslations,
+} from "~/i18n/ui";
+import Layout from "~/layouts/Layout.astro";
+
+interface Props {
+  entry: CollectionEntry<"journal">;
+}
+
+const { entry } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const { Content } = await render(entry);
+---
+
+<Layout title={`${entry.data.title} — ${site.name}`} description={entry.data.summary}>
+  <article class="mx-auto max-w-3xl px-6 py-16">
+    <a
+      href={localizedPath(locale, "/journal")}
+      class="font-mono text-xs text-muted hover:text-accent">← {t("journal.back")}</a
+    >
+    <div class="mt-8 flex items-center gap-3 font-mono text-xs text-muted">
+      <span>{formatFullDate(locale, entry.data.date)}</span>
+      <span class="rounded-full border border-line px-2 py-0.5">
+        {t(`type.${entry.data.type}`)}
+      </span>
+    </div>
+    <h1 class="mt-3 text-3xl font-semibold tracking-tight">{entry.data.title}</h1>
+    <p class="mt-3 text-lg leading-relaxed text-muted">{entry.data.summary}</p>
+    <div class="prose mt-10">
+      <Content />
+    </div>
+    {
+      entry.data.tags.length > 0 && (
+        <ul class="mt-12 flex flex-wrap gap-2" aria-label="Tags">
+          {entry.data.tags.map((tag) => (
+            <li class="rounded-full border border-line px-2 py-0.5 font-mono text-xs text-muted">
+              {tag}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </article>
+</Layout>
