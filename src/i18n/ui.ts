@@ -37,3 +37,33 @@ export const formatMonthYear = (locale: Locale, date?: Date, present = "") =>
         year: "numeric",
       })
     : present;
+
+export const formatFullDate = (locale: Locale, date: Date) =>
+  date.toLocaleDateString(localeCodes[locale], {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+export const byLocale =
+  (locale: Locale) =>
+  (entry: { id: string }): boolean =>
+    entry.id.startsWith(`${locale}/`);
+
+export const entrySlug = (id: string): string => id.slice(id.indexOf("/") + 1);
+
+export const localizedPath = (locale: Locale, path: string): string =>
+  locale === defaultLocale
+    ? path
+    : path === "/"
+      ? `/${locale}`
+      : `/${locale}${path}`;
+
+export const barePath = (path: string): string => {
+  for (const locale of locales) {
+    if (locale === defaultLocale) continue;
+    if (path === `/${locale}`) return "/";
+    if (path.startsWith(`/${locale}/`)) return path.slice(locale.length + 1);
+  }
+  return path;
+};

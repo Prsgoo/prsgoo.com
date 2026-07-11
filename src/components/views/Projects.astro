@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+
+import ProjectCard from "~/components/ProjectCard.astro";
+import site from "~/data/site.yaml";
+import { byLocale, toLocale, useTranslations } from "~/i18n/ui";
+import Layout from "~/layouts/Layout.astro";
+
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+
+const projects = (await getCollection("projects", byLocale(locale))).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Layout title={`${t("projects.title")} — ${site.name}`}>
+  <div class="mx-auto max-w-5xl px-6 py-16">
+    <h1 class="text-3xl font-semibold tracking-tight">{t("projects.title")}</h1>
+    <p class="mt-3 max-w-xl leading-relaxed text-muted">{t("projects.intro")}</p>
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </div>
+</Layout>

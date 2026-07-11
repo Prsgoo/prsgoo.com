@@ -9,7 +9,13 @@ import SpeedInsights from "@vercel/speed-insights/astro";
 
 import ArtDots from "~/components/ArtDots.astro";
 import site from "~/data/site.yaml";
-import { toLocale, useTranslations } from "~/i18n/ui";
+import {
+  barePath,
+  languageNames,
+  localizedPath,
+  toLocale,
+  useTranslations,
+} from "~/i18n/ui";
 
 interface Props {
   title: string;
@@ -32,7 +38,19 @@ const navItems = [
   { href: "/projects", label: t("nav.projects"), icon: "lucide:folder" },
   { href: "/journal", label: t("nav.journal"), icon: "lucide:book-open" },
 ];
-const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+const isActive = (href: string) => {
+  const target = localizedPath(locale, href);
+  return path === target || path.startsWith(`${target}/`);
+};
+
+const otherLocale = locale === "en" ? "es" : "en";
+const bare = barePath(path);
+const switchHref = localizedPath(otherLocale, bare);
+const alternates = [
+  { hreflang: "en", href: new URL(localizedPath("en", bare), Astro.site) },
+  { hreflang: "es", href: new URL(localizedPath("es", bare), Astro.site) },
+  { hreflang: "x-default", href: new URL(localizedPath("en", bare), Astro.site) },
+];
 ---
 
 <!doctype html>
@@ -48,6 +66,11 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="canonical" href={canonicalURL} />
+    {
+      alternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+      ))
+    }
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -66,7 +89,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
     <header data-header class="sticky top-0 z-50">
       <div class="flex items-center justify-between px-6 py-4 sm:px-8">
         <a
-          href="/"
+          href={localizedPath(locale, "/")}
           class="text-text hover:text-accent"
           aria-label="Prsgoo — home"
         >
@@ -91,7 +114,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
           {
             navItems.map((item) => (
               <a
-                href={item.href}
+                href={localizedPath(locale, item.href)}
                 aria-label={item.label}
                 title={item.label}
                 aria-current={isActive(item.href) ? "page" : undefined}
@@ -137,6 +160,14 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
             <Icon name="lucide:sun" class="icon-sun h-5 w-5" />
             <Icon name="lucide:moon" class="icon-moon h-5 w-5" />
           </button>
+          <a
+            href={switchHref}
+            aria-label={t("nav.language")}
+            title={languageNames[otherLocale]}
+            class="hover:text-text"
+          >
+            <Icon name="lucide:languages" class="h-5 w-5" />
+          </a>
         </nav>
       </div>
     </header>

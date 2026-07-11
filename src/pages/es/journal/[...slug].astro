@@ -7,7 +7,7 @@ import { byLocale, entrySlug } from "~/i18n/ui";
 export async function getStaticPaths() {
   const entries = await getCollection(
     "journal",
-    (e) => byLocale("en")(e) && (import.meta.env.DEV || !e.data.draft),
+    (e) => byLocale("es")(e) && (import.meta.env.DEV || !e.data.draft),
   );
   return entries.map((entry) => ({
     params: { slug: entrySlug(entry.id) },
