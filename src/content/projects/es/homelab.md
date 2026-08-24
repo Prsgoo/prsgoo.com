@@ -4,6 +4,8 @@ description: Homelab en Proxmox, gestionado como producción
 date: 2026-06-15
 tags: [Proxmox, Linux, Self-hosting, Docker]
 featured: true
+repo: https://github.com/Prsgoo/homelab
+url: https://homelab.prsgoo.com/
 caseStudy: homelab
 ---
 
