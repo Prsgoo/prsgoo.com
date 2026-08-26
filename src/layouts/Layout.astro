@@ -27,7 +27,7 @@ const t = useTranslations(locale);
 
 const {
   title,
-  description = `${site.name} — ${site.role[locale]}. ${t("meta.description")}`,
+  description = `${site.name} - ${site.role[locale]}. ${t("meta.description")}`,
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL("/og.png", Astro.site);
@@ -91,7 +91,7 @@ const alternates = [
         <a
           href={localizedPath(locale, "/")}
           class="text-text hover:text-accent"
-          aria-label="Prsgoo — home"
+          aria-label="Prsgoo - home"
         >
           <svg
             viewBox="0 0 128 128"

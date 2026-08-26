@@ -2,17 +2,19 @@ name: Jorge Rojas Escobar
 github: https://github.com/Prsgoo
 linkedin: https://www.linkedin.com/in/jrojas-escobar
 role:
-  en: Senior Backend Engineer (.NET)
-  es: Ingeniero backend senior (.NET)
+  en: Senior Backend Engineer · .NET · Cloud & DevOps
+  es: Ingeniero Backend Senior · .NET · Cloud & DevOps
 tagline:
   en: >-
-    Quality and stability above all — I build backends that are boring in the
-    best way: rock-solid, low-maintenance, and easy to extend without breaking
-    what already works.
+    C# and .NET are my primary tools - backend systems, REST APIs, the
+    architecture underneath. I also care about the operational side:
+    infrastructure, CI/CD, taking things from code to production. Boring
+    backends in the best sense: solid, maintainable, and easy to evolve.
   es: >-
-    Calidad y estabilidad ante todo — construyo backends aburridos en el buen
-    sentido: sólidos como una roca, de bajo mantenimiento y fáciles de ampliar
-    sin romper lo que ya funciona.
+    C# y .NET son mis herramientas principales - sistemas backend, REST APIs,
+    la arquitectura de fondo. También me importa el lado operativo:
+    infraestructura, CI/CD, llevar las cosas del código a producción. Backends
+    aburridos en el buen sentido: sólidos, mantenibles y fáciles de evolucionar.
 location:
   en: Seville, Andalusia, Spain · open to remote
   es: Sevilla, Andalucía, España · abierto a remoto

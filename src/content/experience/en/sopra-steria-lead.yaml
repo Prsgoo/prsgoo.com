@@ -1,7 +1,8 @@
 role: Software Engineer · Technical Lead (Backend)
 company: Sopra Steria
-location: Seville, Spain (Remote / Hybrid)
+location: Seville, Spain (Hybrid)
 start: 2023-12-01
+end: 2026-01-12
 tags:
   - "C#/.NET"
   - SQL Server
@@ -11,4 +12,4 @@ tags:
   - Angular
 highlights:
   - Backend technical lead across internal and client projects, owning architecture and REST API design in C#/.NET.
-  - Delivered the team's first product on a new microfrontend architecture, and raised quality with automated testing — unit, integration, and mutation testing.
+  - Delivered the team's first product on a new microfrontend architecture, and raised quality with automated testing - unit, integration, and mutation testing.
