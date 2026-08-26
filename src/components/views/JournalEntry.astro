@@ -21,7 +21,7 @@ const t = useTranslations(locale);
 const { Content } = await render(entry);
 ---
 
-<Layout title={`${entry.data.title} — ${site.name}`} description={entry.data.summary}>
+<Layout title={`${entry.data.title} - ${site.name}`} description={entry.data.summary}>
   <article class="mx-auto max-w-3xl px-6 py-16">
     <a
       href={localizedPath(locale, "/journal")}

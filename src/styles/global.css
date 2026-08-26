@@ -27,10 +27,10 @@
 :root[data-theme="light"] {
   color-scheme: light;
   --color-bg: #faf9f7;
-  --color-surface: #f5f4f2;
-  --color-line: #e7e5e2;
+  --color-surface: #eeecea;
+  --color-line: #d6d3cf;
   --color-text: #1c1917;
-  --color-muted: #57534e;
+  --color-muted: #44403c;
   --color-accent: #b45309;
 
   --card: color-mix(in srgb, white 25%, transparent);
@@ -129,6 +129,64 @@ html:not([data-theme="light"]) .icon-moon {
       transform: none;
       transition: none;
     }
+  }
+
+  dialog[data-project-dialog] {
+    margin: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    width: min(480px, calc(100vw - 2rem));
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  dialog[data-project-dialog]::backdrop {
+    background: rgb(0 0 0 / 0.35);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+  dialog[data-project-dialog] .card {
+    background: var(--color-surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 0.25);
+    max-height: calc(100dvh - 4rem);
+    overflow-y: auto;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    dialog[data-project-dialog][open] {
+      animation: project-dialog-in 0.18s ease;
+    }
+  }
+  @keyframes project-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .card-prose {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+  .card-prose p + p {
+    margin-top: 0.6rem;
+  }
+  .card-prose ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .card-prose li + li {
+    margin-top: 0.2rem;
+  }
+  .card-prose strong {
+    color: var(--color-text);
+    font-weight: 500;
   }
 
   .prose {
