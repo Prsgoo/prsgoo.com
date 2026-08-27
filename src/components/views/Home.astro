@@ -105,13 +105,23 @@ const journal = (
           </div>
           <ul class="mt-3 divide-y divide-line/60">
             {recentExp.map(({ data: job }) => (
-              <li class="py-2.5">
-                <p class="text-sm font-medium text-text">{job.role}</p>
-                <p class="mt-0.5 text-sm text-muted">
-                  {job.company} ·{" "}
-                  {formatMonthYear(locale, job.start)} –{" "}
-                  {formatMonthYear(locale, job.end, t("experience.present"))}
-                </p>
+              <li class="py-3">
+                <div class="flex flex-wrap items-baseline gap-x-2">
+                  <span class="text-sm font-medium text-text">{job.role}</span>
+                  <span class="text-sm text-muted">
+                    {job.company} · {formatMonthYear(locale, job.start)} –{" "}
+                    {formatMonthYear(locale, job.end, t("experience.present"))}
+                  </span>
+                </div>
+                {job.tags.length > 0 && (
+                  <ul class="mt-1.5 flex flex-wrap gap-1.5">
+                    {job.tags.map((tag) => (
+                      <li class="rounded-full border border-line/60 px-2.5 py-0.5 font-mono text-xs text-muted">
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
