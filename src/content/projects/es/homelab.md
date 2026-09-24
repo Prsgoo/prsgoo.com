@@ -2,7 +2,7 @@
 title: Homelab
 description: Infraestructura self-hosted de grado producción sobre Proxmox VE 8
 date: 2026-06-15
-order: 1
+order: 2
 tags: [Proxmox VE, Linux, Docker, Traefik]
 featured: true
 repo: https://github.com/Prsgoo/homelab
